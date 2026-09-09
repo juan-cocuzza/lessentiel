@@ -39,8 +39,14 @@ CREATE TABLE IF NOT EXISTS orders (
   is_preorder BOOLEAN NOT NULL DEFAULT false,
   deposit_paid BOOLEAN NOT NULL DEFAULT false,
   balance_paid BOOLEAN NOT NULL DEFAULT false,
+  preference_id TEXT,
+  items JSONB DEFAULT '[]'::jsonb,
   created_at TIMESTAMPTZ NOT NULL DEFAULT timezone('utc'::text, now())
 );
+
+-- Asegurar que las columnas existan si la tabla ya había sido creada previamente
+ALTER TABLE orders ADD COLUMN IF NOT EXISTS preference_id TEXT;
+ALTER TABLE orders ADD COLUMN IF NOT EXISTS items JSONB DEFAULT '[]'::jsonb;
 
 -- 4. Índices para optimizar el rendimiento de las consultas
 CREATE INDEX IF NOT EXISTS idx_products_is_by_request ON products (is_by_request);

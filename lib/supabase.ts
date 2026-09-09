@@ -55,6 +55,8 @@ export type OrderRow = {
   is_preorder: boolean;
   deposit_paid: boolean;
   balance_paid: boolean;
+  preference_id: string | null;
+  items?: any[] | null;
   created_at: string;
 };
 
@@ -67,6 +69,8 @@ export type OrderInsert = {
   is_preorder?: boolean;
   deposit_paid?: boolean;
   balance_paid?: boolean;
+  preference_id?: string | null;
+  items?: any[] | null;
   created_at?: string;
 };
 
@@ -79,6 +83,8 @@ export type OrderUpdate = {
   is_preorder?: boolean;
   deposit_paid?: boolean;
   balance_paid?: boolean;
+  preference_id?: string | null;
+  items?: any[] | null;
   created_at?: string;
 };
 

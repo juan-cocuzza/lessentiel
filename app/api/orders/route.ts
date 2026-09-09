@@ -81,6 +81,7 @@ export async function POST(req: Request) {
       is_preorder: isPreorder,
       deposit_paid: false,
       balance_paid: false,
+      items: items,
     };
 
     const { data: order, error: insertError } = await supabase
