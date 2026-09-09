@@ -10,6 +10,8 @@ export interface Product {
   description: string;
   price: number;
   image: string;
+  images?: string[];
+  is_by_request?: boolean;
   availability: ProductAvailability;
   category: ProductCategory;
   sizes: number[];

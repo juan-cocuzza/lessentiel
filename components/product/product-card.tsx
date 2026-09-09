@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { motion } from "framer-motion";
 import type { Product } from "@/lib/types";
 import { formatPrice, calculateDeposit, cn } from "@/lib/utils";
@@ -30,7 +31,10 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
         transition={{ duration: 0.5, delay: index * 0.1 }}
         className="group flex flex-col overflow-hidden rounded-sm border border-white/10 bg-charcoal-50/50 transition-all duration-300 hover:border-gold/30 hover:shadow-[0_8px_40px_rgba(201,169,98,0.12)]"
       >
-        <div className="relative aspect-square overflow-hidden bg-graphite">
+        <Link
+          href={`/products/${product.id}`}
+          className="relative aspect-square overflow-hidden bg-graphite block cursor-pointer"
+        >
           <Image
             src={product.image}
             alt={product.name}
@@ -43,13 +47,15 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
               {isStock ? "Stock" : "Por Encargo"}
             </Badge>
           </div>
-        </div>
+        </Link>
 
         <div className="flex flex-1 flex-col p-4 sm:p-5">
           <p className="label-caps text-[10px]">{product.brand}</p>
-          <h3 className="mt-1 font-display text-lg font-medium text-ivory sm:text-xl">
-            {product.name}
-          </h3>
+          <Link href={`/products/${product.id}`}>
+            <h3 className="mt-1 font-display text-lg font-medium text-ivory sm:text-xl hover:text-gold transition-colors">
+              {product.name}
+            </h3>
+          </Link>
           <p className="mt-2 line-clamp-2 text-sm text-ivory/60">
             {product.description}
           </p>
