@@ -1,10 +1,11 @@
+
 import type { Metadata, Viewport } from "next";
 import { Playfair_Display, Montserrat } from "next/font/google";
-import "./globals.css";
 import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
 import { CartProvider } from "@/lib/cart-context";
 import { CartDrawer } from "@/components/cart-drawer";
+import "@/app/globals.css";
 
 const playfair = Playfair_Display({
   subsets: ["latin"],
@@ -33,10 +34,27 @@ export const metadata: Metadata = {
     "calzado deportivo",
   ],
   openGraph: {
-    title: "L'essentiel | El alma de tus pies",
-    description: "Botines de fútbol de alta gama. Stock inmediato y pedidos por encargo.",
+    title: "L'essentiel | Botines de Fútbol Premium",
+    description:
+      "Botines de fútbol premium con la mística de Maradona, stock inmediato y piezas únicas por encargo.",
     type: "website",
     locale: "es_AR",
+    siteName: "L'essentiel",
+    images: [
+      {
+        url: "/opengraph-image",
+        width: 1200,
+        height: 630,
+        alt: "L'essentiel | Botines de Fútbol Premium",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "L'essentiel | Botines de Fútbol Premium",
+    description:
+      "Botines premium con la mística de Maradona y confección por encargo.",
+    images: ["/opengraph-image"],
   },
 };
 

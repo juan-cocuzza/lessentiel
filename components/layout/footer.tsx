@@ -13,6 +13,10 @@ export function Footer() {
             <p className="mt-2 text-sm text-ivory/60">
               El alma de tus pies. Botines premium con la esencia de Maradona.
             </p>
+            <p className="mt-4 max-w-xs text-xs leading-relaxed text-gold/80">
+              Los modelos por encargo se reservan con una seña del 50%. El saldo
+              se abona antes del despacho.
+            </p>
           </div>
 
           <div>
@@ -45,12 +49,12 @@ export function Footer() {
             <p className="label-caps mb-4">Legal</p>
             <ul className="space-y-2 text-sm text-ivory/60">
               <li>
-                <Link href="#" className="hover:text-gold">
+                <Link href="/politicas/terminos" className="hover:text-gold">
                   Términos y condiciones
                 </Link>
               </li>
               <li>
-                <Link href="#" className="hover:text-gold">
+                <Link href="/politicas/cambios" className="hover:text-gold">
                   Política de cambios
                 </Link>
               </li>
@@ -58,9 +62,14 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="mt-12 border-t border-white/10 pt-8 text-center text-xs text-ivory/40">
+        <div className="mt-12 border-t border-white/10 pt-8 text-center">
+          <p className="font-display text-lg italic text-gold">
+            La pelota no se mancha.
+          </p>
+          <p className="mt-4 text-xs text-ivory/40">
           © {new Date().getFullYear()} L&apos;essentiel. Todos los derechos
           reservados.
+          </p>
         </div>
       </div>
     </footer>

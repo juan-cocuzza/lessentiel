@@ -20,7 +20,6 @@ import {
   ShieldCheck,
   Timer,
   Clock,
-  Info,
   HelpCircle,
 } from "lucide-react";
 import { sizeGuide } from "@/lib/data";
@@ -29,6 +28,7 @@ import type { Product } from "@/lib/types";
 import { formatPrice, calculateDeposit, cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { SizeGuideModal } from "@/components/size-guide-modal";
 import { useCart } from "@/lib/cart-context";
 import {
   Dialog,
@@ -36,19 +36,7 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
-
-// Tabla comparativa detallada específica para botines de fútbol
-const FOOTBALL_SIZE_TABLE = [
-  { arg: 39, us: "7.0", uk: "6.0", cm: "25.0", recommended: "Pie normal / estrecho" },
-  { arg: 40, us: "7.5", uk: "6.5", cm: "25.5", recommended: "Pie normal" },
-  { arg: 41, us: "8.0", uk: "7.0", cm: "26.0", recommended: "Pie normal / ancho" },
-  { arg: 42, us: "8.5", uk: "7.5", cm: "26.5", recommended: "Pie normal / ancho" },
-  { arg: 43, us: "9.5", uk: "8.5", cm: "27.5", recommended: "Pie ancho" },
-  { arg: 44, us: "10.0", uk: "9.0", cm: "28.0", recommended: "Pie ancho" },
-  { arg: 45, us: "10.5", uk: "9.5", cm: "28.5", recommended: "Pie extra ancho" },
-];
 
 export default function ProductDetailPage() {
   const params = useParams();
@@ -77,7 +65,6 @@ export default function ProductDetailPage() {
   // Estados interactivos (llamados incondicionalmente)
   const [activeImageIndex, setActiveImageIndex] = useState<number>(0);
   const [selectedSize, setSelectedSize] = useState<number | null>(null);
-  const [isSizeGuideOpen, setIsSizeGuideOpen] = useState<boolean>(false);
   const [quantity, setQuantity] = useState<number>(1);
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
   const { addItem } = useCart();
@@ -318,111 +305,13 @@ export default function ProductDetailPage() {
                     Elegí tu Talle (ARG)
                   </label>
 
-                  {/* MODAL DE GUÍA DE TALLES: BOTÓN "¿Cuál es mi talle?" */}
-                  <Dialog open={isSizeGuideOpen} onOpenChange={setIsSizeGuideOpen}>
-                    <DialogTrigger asChild>
-                      <button
-                        type="button"
-                        className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-gold hover:text-gold-light transition-colors underline-offset-4 hover:underline"
-                      >
-                        <Ruler className="h-3.5 w-3.5" />
-                        <span>¿Cuál es mi talle?</span>
-                      </button>
-                    </DialogTrigger>
-
-                    <DialogContent className="max-w-2xl bg-charcoal-100 border border-gold/40 text-ivory p-6 sm:p-8">
-                      <DialogHeader>
-                        <div className="flex items-center gap-2 text-gold">
-                          <Ruler className="h-5 w-5" />
-                          <span className="text-[11px] font-semibold uppercase tracking-widest">
-                            Guía Oficial de Calzado
-                          </span>
-                        </div>
-                        <DialogTitle className="font-display text-2xl font-bold text-ivory mt-1">
-                          Tabla de Equivalencias para Botines
-                        </DialogTitle>
-                        <DialogDescription className="text-xs text-ivory/70">
-                          Los botines de cuero de alto rendimiento se adaptan a la horma de tu pie. Te recomendamos comparar la medida en centímetros de tu plantilla habitual.
-                        </DialogDescription>
-                      </DialogHeader>
-
-                      {/* Tabla comparativa específica para botines */}
-                      <div className="mt-4 overflow-hidden rounded-sm border border-white/10 bg-charcoal-50">
-                        <table className="w-full text-xs text-left">
-                          <thead>
-                            <tr className="border-b border-white/10 bg-white/5 font-semibold uppercase tracking-wider text-gold">
-                              <th className="py-3 px-3.5">ARG</th>
-                              <th className="py-3 px-3.5">CM Plantilla</th>
-                              <th className="py-3 px-3.5">US</th>
-                              <th className="py-3 px-3.5">UK</th>
-                              <th className="py-3 px-3.5 hidden sm:table-cell">Ajuste recomendado</th>
-                            </tr>
-                          </thead>
-                          <tbody className="divide-y divide-white/5 font-mono">
-                            {FOOTBALL_SIZE_TABLE.map((item, idx) => (
-                              <tr
-                                key={item.arg}
-                                className={cn(
-                                  "transition-colors",
-                                  selectedSize === item.arg
-                                    ? "bg-gold/15 text-gold-light font-bold"
-                                    : idx % 2 === 0
-                                    ? "bg-transparent"
-                                    : "bg-white/[0.02]"
-                                )}
-                              >
-                                <td className="py-2.5 px-3.5 font-bold text-ivory">
-                                  {item.arg}
-                                </td>
-                                <td className="py-2.5 px-3.5 text-gold">
-                                  {item.cm} cm
-                                </td>
-                                <td className="py-2.5 px-3.5 text-ivory/70">
-                                  {item.us}
-                                </td>
-                                <td className="py-2.5 px-3.5 text-ivory/70">
-                                  {item.uk}
-                                </td>
-                                <td className="py-2.5 px-3.5 text-[11px] text-ivory/50 font-sans hidden sm:table-cell">
-                                  {item.recommended}
-                                </td>
-                              </tr>
-                            ))}
-                          </tbody>
-                        </table>
-                      </div>
-
-                      {/* Consejos prácticos de medición de fútbol */}
-                      <div className="mt-4 rounded-sm border border-gold/20 bg-gold/5 p-4 text-xs space-y-2">
-                        <p className="font-semibold text-gold flex items-center gap-1.5">
-                          <Info className="h-4 w-4" />
-                          ¿Cómo medir tu pie con precisión futbolera?
-                        </p>
-                        <ol className="list-decimal list-inside space-y-1 text-ivory/70 pl-1">
-                          <li>Apoyá una hoja en el suelo contra un zócalo o pared lisa.</li>
-                          <li>Colocá tu talón firme contra la pared y dibujá una línea en el dedo más largo.</li>
-                          <li>Medí la distancia en centímetros. Si usás medias de compresión o térmicas, agregá 0.5 cm de margen.</li>
-                        </ol>
-                      </div>
-
-                      <div className="mt-6 flex justify-end">
-                        <Button
-                          onClick={() => setIsSizeGuideOpen(false)}
-                          className="w-full sm:w-auto"
-                        >
-                          Entendido, volver a elegir
-                        </Button>
-                      </div>
-                    </DialogContent>
-                  </Dialog>
+                  <SizeGuideModal selectedSize={selectedSize} />
                 </div>
 
                 {/* Grilla de selección de talle */}
                 <div className="grid grid-cols-4 sm:grid-cols-7 gap-2.5">
                   {product.sizes.map((size) => {
                     const isSelected = selectedSize === size;
-                    const sizeInfo = FOOTBALL_SIZE_TABLE.find((s) => s.arg === size);
-
                     return (
                       <button
                         key={size}
@@ -436,11 +325,6 @@ export default function ProductDetailPage() {
                         )}
                       >
                         <span className="font-mono font-bold leading-none">{size}</span>
-                        {sizeInfo && (
-                          <span className="text-[9px] text-ivory/40 leading-none mt-1">
-                            {sizeInfo.cm}cm
-                          </span>
-                        )}
                       </button>
                     );
                   })}
