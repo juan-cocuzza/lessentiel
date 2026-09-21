@@ -10,6 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { SizeGuide } from "@/components/product/size-guide";
 import { PreorderDialog } from "@/components/product/preorder-dialog";
+import { useCart } from "@/lib/cart-context";
 
 interface ProductCardProps {
   product: Product;
@@ -19,6 +20,7 @@ interface ProductCardProps {
 export function ProductCard({ product, index = 0 }: ProductCardProps) {
   const [selectedSize, setSelectedSize] = useState<number | null>(null);
   const [showPreorder, setShowPreorder] = useState(false);
+  const { addItem } = useCart();
   const isStock = product.availability === "stock";
   const deposit = calculateDeposit(product.price);
 
@@ -96,7 +98,7 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
                 className="w-full"
                 disabled={!selectedSize}
                 onClick={() => {
-                  /* Checkout flow — stock */
+                  if (selectedSize) addItem(product, selectedSize);
                 }}
               >
                 Comprar Ahora
@@ -106,7 +108,9 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
                 className="w-full"
                 variant="outline"
                 disabled={!selectedSize}
-                onClick={() => setShowPreorder(true)}
+                onClick={() => {
+                  if (selectedSize) addItem(product, selectedSize);
+                }}
               >
                 Reservar con el 50%
               </Button>

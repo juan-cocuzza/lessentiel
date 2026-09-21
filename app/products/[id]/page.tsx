@@ -28,6 +28,7 @@ import type { Product } from "@/lib/types";
 import { formatPrice, calculateDeposit, cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { useCart } from "@/lib/cart-context";
 import {
   Dialog,
   DialogContent,
@@ -60,6 +61,25 @@ export default function ProductDetailPage() {
     );
   }, [productId]);
 
+  // Lista de imágenes interactivas
+  const productImages: string[] = useMemo(() => {
+    if (product?.images && product.images.length > 0) {
+      return product.images;
+    }
+    if (product?.image) {
+      return [product.image];
+    }
+    return [];
+  }, [product]);
+
+  // Estados interactivos (llamados incondicionalmente)
+  const [activeImageIndex, setActiveImageIndex] = useState<number>(0);
+  const [selectedSize, setSelectedSize] = useState<number | null>(null);
+  const [isSizeGuideOpen, setIsSizeGuideOpen] = useState<boolean>(false);
+  const [quantity, setQuantity] = useState<number>(1);
+  const [isProcessing, setIsProcessing] = useState<boolean>(false);
+  const { addItem } = useCart();
+
   // Si no se encuentra el producto, fallback elegante
   if (!product) {
     return (
@@ -77,21 +97,6 @@ export default function ProductDetailPage() {
     );
   }
 
-  // Lista de imágenes interactivas
-  const productImages: string[] = useMemo(() => {
-    if (product.images && product.images.length > 0) {
-      return product.images;
-    }
-    return [product.image];
-  }, [product]);
-
-  // Estados interactivos
-  const [activeImageIndex, setActiveImageIndex] = useState<number>(0);
-  const [selectedSize, setSelectedSize] = useState<number | null>(null);
-  const [isSizeGuideOpen, setIsSizeGuideOpen] = useState<boolean>(false);
-  const [quantity, setQuantity] = useState<number>(1);
-  const [isProcessing, setIsProcessing] = useState<boolean>(false);
-
   // Cálculos de seña y saldo
   const isByRequest = product.is_by_request || product.availability === "preorder";
   const depositAmount = calculateDeposit(product.price);
@@ -107,45 +112,10 @@ export default function ProductDetailPage() {
     );
   };
 
-  // Acción de compra o reserva
-  const handleAction = async () => {
+  // Acción de compra o reserva: suma al carrito y abre el Slide-over
+  const handleAction = () => {
     if (!selectedSize) return;
-
-    setIsProcessing(true);
-    try {
-      // Llamar al endpoint /api/orders
-      const response = await fetch("/api/orders", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          customer_name: "Cliente L'essentiel",
-          customer_email: "cliente@example.com",
-          items: [
-            {
-              id: product.id,
-              name: product.name,
-              price: product.price,
-              quantity: quantity,
-              size: selectedSize,
-              is_by_request: isByRequest,
-            },
-          ],
-        }),
-      });
-
-      const data = await response.json();
-
-      if (data?.order?.id) {
-        // Redirigir a checkout con Mercado Pago o vista de seguimiento
-        router.push(`/checkout?orderId=${data.order.id}`);
-      } else {
-        router.push("/#stock");
-      }
-    } catch (err) {
-      console.error("Error al procesar:", err);
-    } finally {
-      setIsProcessing(false);
-    }
+    addItem(product, selectedSize, quantity);
   };
 
   return (

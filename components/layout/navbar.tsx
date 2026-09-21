@@ -2,9 +2,10 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { Menu, X } from "lucide-react";
+import { Menu, X, ShoppingBag } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { useCart } from "@/lib/cart-context";
 
 const navLinks = [
   { href: "#stock", label: "Stock Inmediato" },
@@ -16,6 +17,7 @@ const navLinks = [
 export function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
+  const { openCart, totalCount } = useCart();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -59,19 +61,36 @@ export function Navbar() {
           ))}
         </ul>
 
-        <Button
-          variant="ghost"
-          size="icon"
-          className="lg:hidden"
-          onClick={() => setIsMobileOpen(!isMobileOpen)}
-          aria-label={isMobileOpen ? "Cerrar menú" : "Abrir menú"}
-        >
-          {isMobileOpen ? (
-            <X className="h-6 w-6" />
-          ) : (
-            <Menu className="h-6 w-6" />
-          )}
-        </Button>
+        <div className="flex items-center gap-3">
+          {/* Botón de Carrito con Contador */}
+          <button
+            type="button"
+            onClick={openCart}
+            className="relative flex h-10 w-10 items-center justify-center rounded-sm border border-white/10 bg-charcoal-50/80 text-ivory/80 transition-all hover:border-gold/50 hover:text-gold hover:shadow-[0_0_15px_rgba(201,169,98,0.2)]"
+            aria-label="Abrir carrito de compras"
+          >
+            <ShoppingBag className="h-5 w-5" />
+            {totalCount > 0 && (
+              <span className="absolute -right-1.5 -top-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-gold text-[10px] font-bold font-mono text-charcoal shadow-md">
+                {totalCount}
+              </span>
+            )}
+          </button>
+
+          <Button
+            variant="ghost"
+            size="icon"
+            className="lg:hidden"
+            onClick={() => setIsMobileOpen(!isMobileOpen)}
+            aria-label={isMobileOpen ? "Cerrar menú" : "Abrir menú"}
+          >
+            {isMobileOpen ? (
+              <X className="h-6 w-6" />
+            ) : (
+              <Menu className="h-6 w-6" />
+            )}
+          </Button>
+        </div>
       </nav>
 
       <div

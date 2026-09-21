@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, type ElementType, type FormEvent } from "react";
+import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import {
   Flame,
@@ -24,13 +25,20 @@ const stepIcons: Record<TrackingStatus, ElementType> = {
 };
 
 export function OrderTimeline() {
+  const router = useRouter();
   const [orderCode, setOrderCode] = useState("");
   const [activeStep, setActiveStep] = useState<TrackingStatus | null>(null);
   const [searched, setSearched] = useState(false);
 
   const handleSearch = (e: FormEvent) => {
     e.preventDefault();
-    if (orderCode.trim()) {
+    const clean = orderCode.trim();
+    if (clean) {
+      // Si parece un ID de Supabase (UUID o al menos 8 caracteres), redirigir a la pantalla de tracking dedicada
+      if (clean.length >= 8) {
+        router.push(`/orders/${clean}`);
+        return;
+      }
       setActiveStep("en-vestuario");
       setSearched(true);
     }

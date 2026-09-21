@@ -3,6 +3,8 @@ import { Playfair_Display, Montserrat } from "next/font/google";
 import "./globals.css";
 import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
+import { CartProvider } from "@/lib/cart-context";
+import { CartDrawer } from "@/components/cart-drawer";
 
 const playfair = Playfair_Display({
   subsets: ["latin"],
@@ -55,9 +57,12 @@ export default function RootLayout({
       <body
         className={`${playfair.variable} ${montserrat.variable} min-h-screen bg-charcoal text-ivory antialiased`}
       >
-        <Navbar />
-        <main className="relative">{children}</main>
-        <Footer />
+        <CartProvider>
+          <Navbar />
+          <main className="relative">{children}</main>
+          <Footer />
+          <CartDrawer />
+        </CartProvider>
       </body>
     </html>
   );

@@ -30,6 +30,7 @@ import { supabase, type OrderRow, type OrderStatus } from "@/lib/supabase";
 import { formatPrice, cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { generateWhatsAppMessage, getWhatsAppUrl } from "@/lib/whatsapp";
 
 // Lista de estados disponibles en el orden cronológico del partido
 const STATUS_OPTIONS: {
@@ -274,9 +275,9 @@ export default function AdminOrdersPage() {
   // URL de seguimiento para compartir con el cliente
   const getTrackingUrl = (id: string) => {
     if (typeof window !== "undefined") {
-      return `${window.location.origin}/?orderId=${id}#seguimiento`;
+      return `${window.location.origin}/orders/${id}`;
     }
-    return `https://lessentiel.com/?orderId=${id}#seguimiento`;
+    return `https://lessentiel.com/orders/${id}`;
   };
 
   // -------------------------------------------------------------
@@ -754,6 +755,59 @@ export default function AdminOrdersPage() {
                         )}
                       </div>
                     </div>
+
+                    {/* Barra de Notificación Proactiva por WhatsApp y Accesos Rápidos */}
+                    <div className="mt-4 flex flex-wrap items-center justify-between gap-3 border-t border-white/10 pt-3">
+                      <div className="flex flex-wrap items-center gap-2">
+                        {/* Botón Principal: Notificar al Cliente por WhatsApp */}
+                        <a
+                          href={getWhatsAppUrl(order, getTrackingUrl(order.id))}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-2 rounded-sm bg-emerald-600 px-3 py-1.5 text-xs font-semibold uppercase tracking-wider text-white shadow-sm transition-all hover:bg-emerald-500 hover:shadow-[0_0_15px_rgba(16,185,129,0.3)]"
+                          title="Abrir WhatsApp con mensaje prediseñado según el estado actual"
+                        >
+                          <MessageCircle className="h-4 w-4 fill-white/20" />
+                          <span>Notificar al Cliente</span>
+                        </a>
+
+                        {/* Botón Auxiliar: Copiar Mensaje */}
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const msg = generateWhatsAppMessage(
+                              order,
+                              getTrackingUrl(order.id)
+                            );
+                            navigator.clipboard.writeText(msg);
+                            showToast(
+                              `✓ Mensaje de WhatsApp copiado para ${order.customer_name}`
+                            );
+                          }}
+                          className="inline-flex items-center gap-1.5 rounded-sm border border-white/10 bg-white/5 px-2.5 py-1.5 text-[11px] font-medium text-ivory/70 transition-colors hover:border-gold/40 hover:text-gold"
+                          title="Copiar texto del mensaje de WhatsApp al portapapeles"
+                        >
+                          <Copy className="h-3 w-3" />
+                          <span>Copiar Mensaje</span>
+                        </button>
+                      </div>
+
+                      <div className="flex items-center gap-3 text-xs">
+                        <span className="hidden sm:inline text-ivory/40">
+                          ID: <span className="font-mono text-ivory/60">{order.id.slice(0, 16)}...</span>
+                        </span>
+                        <a
+                          href={`/orders/${order.id}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1 text-[11px] font-medium text-gold/80 hover:text-gold transition-colors"
+                          title="Ver pantalla pública de seguimiento"
+                        >
+                          <span>Ver Tracking</span>
+                          <ExternalLink className="h-3 w-3" />
+                        </a>
+                      </div>
+                    </div>
                   </div>
                 );
               })}
@@ -836,14 +890,13 @@ export default function AdminOrdersPage() {
 
               <div className="mt-6 flex flex-col sm:flex-row items-center justify-end gap-3">
                 <a
-                  href={`https://wa.me/?text=${encodeURIComponent(
-                    `¡Hola ${notifiedOrder.customer_name}! Tus botines ya llegaron al vestuario de L'essentiel y pasaron el control de calidad. Ya podés abonar el saldo restante para el despacho final acá: ${getTrackingUrl(
-                      notifiedOrder.id
-                    )}`
-                  )}`}
+                  href={getWhatsAppUrl(
+                    notifiedOrder,
+                    getTrackingUrl(notifiedOrder.id)
+                  )}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex w-full sm:w-auto items-center justify-center gap-2 rounded-sm bg-emerald-600 px-4 py-2.5 text-xs font-semibold uppercase tracking-wider text-white hover:bg-emerald-500 transition"
+                  className="flex w-full sm:w-auto items-center justify-center gap-2 rounded-sm bg-emerald-600 px-4 py-2.5 text-xs font-semibold uppercase tracking-wider text-white hover:bg-emerald-500 transition shadow-[0_0_15px_rgba(16,185,129,0.3)]"
                 >
                   <MessageCircle className="h-4 w-4" />
                   Enviar por WhatsApp
