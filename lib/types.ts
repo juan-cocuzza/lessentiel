@@ -2,6 +2,13 @@ export type ProductAvailability = "stock" | "preorder";
 
 export type ProductCategory = "clasicos" | "modernos" | "edicion-limitada";
 
+export interface ProductSpecs {
+  sole_type: string; // Tipo de suela: FG, SG, AG, Mixta, etc.
+  material: string;  // Material: Cuero vacuno, K-Leather, etc.
+  weight?: string;   // Peso aproximado: ej. "198g"
+  origin?: string;   // Taller / Confección: ej. "Montebelluna, Italia"
+}
+
 export interface Product {
   id: string;
   name: string;
@@ -16,6 +23,8 @@ export interface Product {
   category: ProductCategory;
   sizes: number[];
   featured?: boolean;
+  specs?: ProductSpecs;
+  stock_quantity?: number;
 }
 
 export type TrackingStatus =
