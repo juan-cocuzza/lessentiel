@@ -140,6 +140,7 @@ export default function ProductDetailPage() {
                   className="relative h-full w-full"
                 >
                   <Image
+                    unoptimized
                     src={productImages[activeImageIndex]}
                     alt={`${product.name} - Vista ${activeImageIndex + 1}`}
                     fill
@@ -204,6 +205,7 @@ export default function ProductDetailPage() {
                     )}
                   >
                     <Image
+                      unoptimized
                       src={img}
                       alt={`Miniatura ${idx + 1}`}
                       fill

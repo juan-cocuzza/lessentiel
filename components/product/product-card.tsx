@@ -19,10 +19,13 @@ interface ProductCardProps {
 
 export function ProductCard({ product, index = 0 }: ProductCardProps) {
   const [selectedSize, setSelectedSize] = useState<number | null>(null);
+  const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [showPreorder, setShowPreorder] = useState(false);
   const { addItem } = useCart();
   const isStock = product.availability === "stock";
   const deposit = calculateDeposit(product.price);
+  const productImages = product.images?.length ? product.images : [product.image];
+  const activeImage = productImages[activeImageIndex] || product.image;
 
   return (
     <>
@@ -38,7 +41,8 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
           className="relative aspect-square overflow-hidden bg-graphite block cursor-pointer"
         >
           <Image
-            src={product.image}
+            unoptimized
+            src={activeImage}
             alt={product.name}
             fill
             className="object-cover transition-transform duration-700 group-hover:scale-105"
@@ -50,6 +54,27 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
             </Badge>
           </div>
         </Link>
+
+        {productImages.length > 1 && (
+          <div className="flex gap-2 border-b border-white/10 bg-charcoal-50/40 px-4 py-3">
+            {productImages.slice(0, 5).map((image, imageIndex) => (
+              <button
+                key={`${image}-${imageIndex}`}
+                type="button"
+                onClick={() => setActiveImageIndex(imageIndex)}
+                aria-label={`Ver imagen ${imageIndex + 1}`}
+                className={cn(
+                  "relative h-10 w-10 overflow-hidden rounded-sm border transition",
+                  activeImageIndex === imageIndex
+                    ? "border-gold ring-1 ring-gold/50"
+                    : "border-white/10 opacity-60 hover:opacity-100"
+                )}
+              >
+                <Image unoptimized src={image} alt="" fill className="object-cover" sizes="40px" />
+              </button>
+            ))}
+          </div>
+        )}
 
         <div className="flex flex-1 flex-col p-4 sm:p-5">
           <p className="label-caps text-[10px]">{product.brand}</p>
