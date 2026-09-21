@@ -79,7 +79,7 @@ const STATUS_OPTIONS: {
 
 export default function AdminOrdersPage() {
   // 1. Estado de autenticación básica
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  const [isAuthenticated] = useState<boolean>(true);
   const [passwordInput, setPasswordInput] = useState<string>("");
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [authError, setAuthError] = useState<string | null>(null);
@@ -105,14 +105,6 @@ export default function AdminOrdersPage() {
     process.env.NEXT_PUBLIC_ADMIN_PASSWORD ||
     process.env.ADMIN_PASSWORD ||
     "lessentiel2026";
-
-  // Verificar si ya está autenticado en la sesión actual
-  useEffect(() => {
-    const sessionAuth = sessionStorage.getItem("lessentiel_admin_auth");
-    if (sessionAuth === "true") {
-      setIsAuthenticated(true);
-    }
-  }, []);
 
   // Función para obtener todas las órdenes ordenadas por created_at desc
   const fetchOrders = React.useCallback(async (isBackground = false) => {
@@ -141,10 +133,8 @@ export default function AdminOrdersPage() {
 
   // Cargar órdenes cuando se autentique
   useEffect(() => {
-    if (isAuthenticated) {
-      fetchOrders();
-    }
-  }, [isAuthenticated, fetchOrders]);
+    fetchOrders();
+  }, [fetchOrders]);
 
   // Mensajes temporales tipo Toast
   const showToast = (message: string) => {
@@ -159,18 +149,16 @@ export default function AdminOrdersPage() {
     e.preventDefault();
     setAuthError(null);
 
-    if (passwordInput === expectedPassword) {
-      setIsAuthenticated(true);
-      sessionStorage.setItem("lessentiel_admin_auth", "true");
-    } else {
+    if (passwordInput !== expectedPassword) {
       setAuthError("Contraseña incorrecta. Verificá la clave configurada en .env");
     }
   };
 
   // Manejar Logout
   const handleLogout = () => {
-    sessionStorage.removeItem("lessentiel_admin_auth");
-    setIsAuthenticated(false);
+    fetch("/api/admin/logout", { method: "POST" }).finally(() => {
+      window.location.href = "/admin/login";
+    });
     setPasswordInput("");
   };
 

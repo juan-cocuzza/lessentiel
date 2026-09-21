@@ -34,11 +34,16 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const router = useRouter();
   const [isMobileOpen, setIsMobileOpen] = useState(false);
 
-  const handleLogout = () => {
-    sessionStorage.removeItem("lessentiel_admin_auth");
+  const handleLogout = async () => {
+    await fetch("/api/admin/logout", { method: "POST" });
     setIsMobileOpen(false);
-    router.push("/admin/orders");
+    router.replace("/admin/login");
+    router.refresh();
   };
+
+  if (pathname === "/admin/login") {
+    return <>{children}</>;
+  }
 
   const sidebar = (
     <aside className="flex h-full w-72 flex-col border-r border-white/10 bg-charcoal-100 p-5">
