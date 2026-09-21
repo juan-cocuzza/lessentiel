@@ -122,6 +122,17 @@ export function CartDrawer() {
 
       const orderId = orderData.order.id;
 
+      localStorage.setItem(
+        `lessentiel_order_${orderId}`,
+        JSON.stringify(orderData.order)
+      );
+
+      if (orderData.is_fallback) {
+        closeCart();
+        window.location.href = `/checkout/success?orderId=${encodeURIComponent(orderId)}&paymentType=${hasPreorder ? "deposit" : "full"}&localOrder=true`;
+        return;
+      }
+
       // 2. Si eligió transferencia bancaria:
       if (payWithTransfer) {
         closeCart();

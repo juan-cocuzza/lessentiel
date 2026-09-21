@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { supabase } from "@/lib/supabase";
+import { supabase, type OrderStatus } from "@/lib/supabase";
 
 export const dynamic = "force-dynamic";
 
@@ -96,21 +96,34 @@ export async function POST(req: Request) {
       items: items,
     };
 
-    const { data: order, error: insertError } = await supabase
-      .from("orders")
-      .insert(orderData)
-      .select()
-      .single();
+    type CheckoutOrder = Omit<typeof orderData, "status"> & {
+      status: OrderStatus;
+      id: string;
+      created_at: string;
+    };
+    let order: CheckoutOrder;
+    let isFallback = false;
 
-    if (insertError) {
-      console.error("Error al registrar orden en Supabase:", insertError);
-      return NextResponse.json(
-        {
-          error: "Error interno al registrar la orden en la base de datos.",
-          details: insertError.message,
-        },
-        { status: 500 }
-      );
+    try {
+      const { data, error: insertError } = await supabase
+        .from("orders")
+        .insert(orderData)
+        .select()
+        .single();
+
+      if (insertError || !data) {
+        throw insertError || new Error("Supabase no devolvió la orden creada.");
+      }
+
+      order = data as CheckoutOrder;
+    } catch (error) {
+      isFallback = true;
+      console.warn("Supabase no disponible. Continuando con orden local:", error);
+      order = {
+        ...orderData,
+        id: `ORD-${Math.floor(1000 + Math.random() * 9000)}`,
+        created_at: new Date().toISOString(),
+      };
     }
 
     // 6. Preparar estructura lista para pasarela de pago (Mercado Pago / Checkout)
@@ -151,6 +164,7 @@ export async function POST(req: Request) {
       {
         success: true,
         order,
+        is_fallback: isFallback,
         payment: {
           flow: isPreorder ? "preorder_deposit" : "stock_full_payment",
           amount_to_pay: amountToPayNow,
@@ -161,7 +175,7 @@ export async function POST(req: Request) {
           gateway_payload: gatewayPayload,
         },
       },
-      { status: 201 }
+      { status: isFallback ? 200 : 201 }
     );
   } catch (err: any) {
     console.error("Error en POST /api/orders:", err);

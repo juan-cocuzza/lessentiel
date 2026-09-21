@@ -3,6 +3,33 @@ import { supabase } from "./supabase";
 import type { Product } from "./types";
 import { MOCK_BOOTS, getMockProductById } from "./mock-data";
 
+export const LOCAL_PRODUCTS_STORAGE_KEY = "lessentiel_local_products";
+
+function getLocalProducts(): Product[] {
+  if (typeof window === "undefined") return [];
+  try {
+    const stored = localStorage.getItem(LOCAL_PRODUCTS_STORAGE_KEY);
+    return stored ? (JSON.parse(stored) as Product[]) : [];
+  } catch {
+    return [];
+  }
+}
+
+export function persistLocalProduct(product: Product) {
+  if (typeof window === "undefined") return;
+  const products = getLocalProducts();
+  const next = products.some((item) => item.id === product.id)
+    ? products.map((item) => (item.id === product.id ? product : item))
+    : [product, ...products];
+  localStorage.setItem(LOCAL_PRODUCTS_STORAGE_KEY, JSON.stringify(next));
+}
+
+function mergeLocalProducts(products: Product[]) {
+  const localProducts = getLocalProducts();
+  const localIds = new Set(localProducts.map((product) => product.id));
+  return [...localProducts, ...products.filter((product) => !localIds.has(product.id))];
+}
+
 /**
  * Convierte un registro de producto proveniente de Supabase al formato Product de la aplicación
  */
@@ -71,17 +98,20 @@ export async function getProductsWithFallback(): Promise<{
           error.message
         );
       }
-      return { products: MOCK_BOOTS, fromFallback: true };
+      return { products: mergeLocalProducts(MOCK_BOOTS), fromFallback: true };
     }
 
     const mapped = data.map(mapSupabaseRowToProduct);
-    return { products: mapped, fromFallback: false };
+    return {
+      products: mergeLocalProducts(mapped).filter((product) => product.active !== false),
+      fromFallback: false,
+    };
   } catch (err: any) {
     console.warn(
       "[L'essentiel] Error de conexión con Supabase. Activando mock-data de contingencia:",
       err?.message
     );
-    return { products: MOCK_BOOTS, fromFallback: true };
+    return { products: mergeLocalProducts(MOCK_BOOTS), fromFallback: true };
   }
 }
 
@@ -109,9 +139,14 @@ export async function getProductByIdWithFallback(
     );
   }
 
-  // Fallback a mock-data
-  const mockProduct = getMockProductById(idOrSlug);
-  return { product: mockProduct, fromFallback: true };
+  // Fallback local primero, luego catálogo mock.
+  const localProduct = getLocalProducts().find(
+    (product) => product.id === idOrSlug || product.slug === idOrSlug
+  );
+  return {
+    product: localProduct || getMockProductById(idOrSlug),
+    fromFallback: true,
+  };
 }
 
 /**
@@ -119,7 +154,7 @@ export async function getProductByIdWithFallback(
  * con carga instantánea de mock-data y sincronización reactiva con Supabase.
  */
 export function useProducts() {
-  const [products, setProducts] = useState<Product[]>(MOCK_BOOTS);
+  const [products, setProducts] = useState<Product[]>(() => mergeLocalProducts(MOCK_BOOTS));
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isUsingFallback, setIsUsingFallback] = useState<boolean>(true);
 

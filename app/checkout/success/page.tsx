@@ -63,11 +63,19 @@ function CheckoutSuccessContent() {
 
         if (error) {
           console.warn("No se pudo obtener la orden desde Supabase:", error);
+          const localOrder = localStorage.getItem(`lessentiel_order_${orderId}`);
+          if (localOrder) {
+            setOrder(JSON.parse(localOrder));
+          }
         } else if (data) {
           setOrder(data);
         }
       } catch (err) {
         console.error("Error al consultar orden:", err);
+        const localOrder = localStorage.getItem(`lessentiel_order_${orderId}`);
+        if (localOrder) {
+          setOrder(JSON.parse(localOrder));
+        }
       } finally {
         setIsLoading(false);
       }

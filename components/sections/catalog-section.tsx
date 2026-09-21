@@ -20,7 +20,7 @@ export function CatalogSection() {
 
   // Filtrado y ordenamiento de productos
   const filteredProducts = useMemo(() => {
-    let result = [...products];
+    let result = products.filter((product) => product.active !== false);
 
     // 1. Filtrar por categoría
     if (selectedCategory === "stock") {

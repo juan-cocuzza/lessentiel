@@ -3,7 +3,7 @@
 import { FormEvent, useEffect, useState } from "react";
 import Image from "next/image";
 import { Edit3, ImagePlus, Plus, Power, Trash2, X } from "lucide-react";
-import { getProductsWithFallback } from "@/lib/products";
+import { getProductsWithFallback, persistLocalProduct } from "@/lib/products";
 import { supabase } from "@/lib/supabase";
 import type { Product } from "@/lib/types";
 import { formatPrice } from "@/lib/utils";
@@ -109,8 +109,14 @@ export default function AdminCatalogPage() {
     if (editingProduct) {
       const updated = { ...editingProduct, ...payload, image: form.images[0], images: form.images, sizes, availability: form.is_by_request ? "preorder" : "stock" } as Product;
       setProducts((current) => current.map((product) => product.id === editingProduct.id ? updated : product));
-      const { error } = await supabase.from("products").update(payload).eq("id", editingProduct.id);
-      setMessage(error ? "Guardado localmente; revisá los permisos de Storage/Supabase." : "Producto actualizado.");
+      let persistenceError = false;
+      try {
+        persistenceError = Boolean((await supabase.from("products").update(payload).eq("id", editingProduct.id)).error);
+      } catch {
+        persistenceError = true;
+      }
+      if (persistenceError) persistLocalProduct(updated);
+      setMessage(persistenceError ? "Guardado localmente; revisá los permisos de Storage/Supabase." : "Producto actualizado.");
     } else {
       const localProduct: Product = {
         ...payload,
@@ -128,8 +134,14 @@ export default function AdminCatalogPage() {
         specs: { sole_type: "FG (Césped Natural)", upper_material: "Sintético ultra-liviano", weight: "195g" },
       };
       setProducts((current) => [localProduct, ...current]);
-      const { error } = await supabase.from("products").insert(payload);
-      setMessage(error ? "Creado localmente; revisá los permisos de Storage/Supabase." : "Producto creado.");
+      let persistenceError = false;
+      try {
+        persistenceError = Boolean((await supabase.from("products").insert(payload)).error);
+      } catch {
+        persistenceError = true;
+      }
+      if (persistenceError) persistLocalProduct(localProduct);
+      setMessage(persistenceError ? "Creado localmente; revisá los permisos de Storage/Supabase." : "Producto creado.");
     }
     setEditingProduct(null);
     setIsCreating(false);
@@ -138,7 +150,14 @@ export default function AdminCatalogPage() {
   async function toggleProduct(product: Product) {
     const active = product.active === false;
     setProducts((current) => current.map((item) => item.id === product.id ? { ...item, active } : item));
-    await supabase.from("products").update({ active }).eq("id", product.id);
+    const updated = { ...product, active };
+    let persistenceError = false;
+    try {
+      persistenceError = Boolean((await supabase.from("products").update({ active }).eq("id", product.id)).error);
+    } catch {
+      persistenceError = true;
+    }
+    if (persistenceError) persistLocalProduct(updated);
   }
 
   return (

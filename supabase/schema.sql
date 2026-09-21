@@ -86,6 +86,19 @@ CREATE POLICY "Permitir lectura pública de productos"
   TO anon, authenticated
   USING (true);
 
+DROP POLICY IF EXISTS "Permitir alta de productos desde el panel" ON products;
+CREATE POLICY "Permitir alta de productos desde el panel"
+  ON products FOR INSERT
+  TO anon, authenticated
+  WITH CHECK (true);
+
+DROP POLICY IF EXISTS "Permitir edición de productos desde el panel" ON products;
+CREATE POLICY "Permitir edición de productos desde el panel"
+  ON products FOR UPDATE
+  TO anon, authenticated
+  USING (true)
+  WITH CHECK (true);
+
 -- Políticas para orders:
 -- Permitir a los clientes generar pedidos (inserción pública / anónima)
 CREATE POLICY "Permitir inserción de órdenes para clientes"
