@@ -53,6 +53,8 @@ export type OrderRow = {
   id: string;
   customer_name: string;
   customer_email: string;
+  phone: string;
+  preferred_size: number;
   total_amount: number;
   status: OrderStatus;
   is_preorder: boolean;
@@ -67,6 +69,8 @@ export type OrderInsert = {
   id?: string;
   customer_name: string;
   customer_email: string;
+  phone: string;
+  preferred_size: number;
   total_amount: number;
   status?: OrderStatus;
   is_preorder?: boolean;
@@ -81,6 +85,8 @@ export type OrderUpdate = {
   id?: string;
   customer_name?: string;
   customer_email?: string;
+  phone?: string;
+  preferred_size?: number;
   total_amount?: number;
   status?: OrderStatus;
   is_preorder?: boolean;

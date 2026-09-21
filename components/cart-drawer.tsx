@@ -47,8 +47,25 @@ export function CartDrawer() {
   const [isCheckingOut, setIsCheckingOut] = useState<boolean>(false);
   const [customerEmail, setCustomerEmail] = useState<string>("");
   const [customerName, setCustomerName] = useState<string>("");
+  const [customerPhone, setCustomerPhone] = useState<string>("");
+  const [preferredSize, setPreferredSize] = useState<string>("");
   const [showEmailPrompt, setShowEmailPrompt] = useState<boolean>(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+
+  React.useEffect(() => {
+    try {
+      const saved = localStorage.getItem("lessentiel_checkout_contact");
+      if (saved) {
+        const contact = JSON.parse(saved);
+        setCustomerName(contact.name || "");
+        setCustomerEmail(contact.email || "");
+        setCustomerPhone(contact.phone || "");
+        setPreferredSize(contact.preferredSize || "");
+      }
+    } catch {
+      // Ignore malformed local checkout data.
+    }
+  }, []);
 
   // Proceder al pago conectando con /api/orders y /api/checkout
   const handleCheckout = async (e?: React.FormEvent) => {
@@ -56,10 +73,20 @@ export function CartDrawer() {
     setErrorMsg(null);
 
     // Si aún no ingresó datos de contacto, solicitar brevemente el email/nombre
-    if (!customerEmail.trim() || !customerName.trim()) {
+    if (!customerEmail.trim() || !customerName.trim() || !customerPhone.trim() || !preferredSize) {
       setShowEmailPrompt(true);
       return;
     }
+
+    localStorage.setItem(
+      "lessentiel_checkout_contact",
+      JSON.stringify({
+        name: customerName.trim(),
+        email: customerEmail.trim().toLowerCase(),
+        phone: customerPhone.trim(),
+        preferredSize: Number(preferredSize),
+      })
+    );
 
     setIsCheckingOut(true);
 
@@ -71,6 +98,8 @@ export function CartDrawer() {
         body: JSON.stringify({
           customer_name: customerName.trim(),
           customer_email: customerEmail.trim().toLowerCase(),
+          phone: customerPhone.trim(),
+          preferred_size: Number(preferredSize),
           payment_method: payWithTransfer ? "transferencia" : "mercadopago",
           items: items.map((item) => ({
             id: item.id,
@@ -402,6 +431,35 @@ export function CartDrawer() {
                             className="w-full rounded-sm border border-white/15 bg-charcoal px-3 py-2 text-xs text-ivory placeholder:text-ivory/40 focus:border-gold focus:outline-none"
                             autoFocus
                           />
+                        </div>
+
+                        <div>
+                          <input
+                            type="tel"
+                            required
+                            value={customerPhone}
+                            onChange={(e) => setCustomerPhone(e.target.value)}
+                            placeholder="Teléfono / WhatsApp (con código de país)"
+                            className="w-full rounded-sm border border-white/15 bg-charcoal px-3 py-2 text-xs text-ivory placeholder:text-ivory/40 focus:border-gold focus:outline-none"
+                          />
+                        </div>
+
+                        <div>
+                          <label htmlFor="preferred-size" className="mb-1 block text-[10px] uppercase tracking-wider text-ivory/50">
+                            Talle de calzado (ARG)
+                          </label>
+                          <select
+                            id="preferred-size"
+                            required
+                            value={preferredSize}
+                            onChange={(e) => setPreferredSize(e.target.value)}
+                            className="w-full rounded-sm border border-white/15 bg-charcoal px-3 py-2 text-xs text-ivory focus:border-gold focus:outline-none"
+                          >
+                            <option value="">Seleccioná tu talle</option>
+                            {[39, 40, 41, 42, 43, 44, 45].map((size) => (
+                              <option key={size} value={size}>{size} ARG</option>
+                            ))}
+                          </select>
                         </div>
 
                         <div>

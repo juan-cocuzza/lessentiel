@@ -15,6 +15,8 @@ export interface CartItemInput {
 export interface CreateOrderRequest {
   customer_name: string;
   customer_email: string;
+  phone: string;
+  preferred_size: number;
   items: CartItemInput[];
   total_amount?: number;
   payment_method?: "mercadopago" | "transferencia";
@@ -23,7 +25,7 @@ export interface CreateOrderRequest {
 export async function POST(req: Request) {
   try {
     const body: CreateOrderRequest = await req.json();
-    const { customer_name, customer_email, items, payment_method } = body;
+    const { customer_name, customer_email, phone, preferred_size, items, payment_method } = body;
 
     // 1. Validaciones básicas de entrada
     if (!customer_name || !customer_name.trim()) {
@@ -38,6 +40,14 @@ export async function POST(req: Request) {
         { error: "El email del cliente (customer_email) es inválido o requerido." },
         { status: 400 }
       );
+    }
+
+    if (!phone || !phone.trim()) {
+      return NextResponse.json({ error: "El teléfono / WhatsApp es requerido." }, { status: 400 });
+    }
+
+    if (!preferred_size || preferred_size < 35 || preferred_size > 50) {
+      return NextResponse.json({ error: "El talle ARG es requerido y debe ser válido." }, { status: 400 });
     }
 
     if (!items || !Array.isArray(items) || items.length === 0) {
@@ -76,6 +86,8 @@ export async function POST(req: Request) {
     const orderData = {
       customer_name: customer_name.trim(),
       customer_email: customer_email.trim().toLowerCase(),
+      phone: phone.trim(),
+      preferred_size: Number(preferred_size),
       total_amount: totalAmount,
       status: "entrada-en-calor" as const,
       is_preorder: isPreorder,

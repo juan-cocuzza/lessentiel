@@ -35,6 +35,8 @@ CREATE TABLE IF NOT EXISTS orders (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   customer_name TEXT NOT NULL,
   customer_email TEXT NOT NULL,
+  phone TEXT NOT NULL DEFAULT '',
+  preferred_size INTEGER NOT NULL DEFAULT 0,
   total_amount NUMERIC(12, 2) NOT NULL DEFAULT 0.00,
   status order_status NOT NULL DEFAULT 'entrada-en-calor',
   is_preorder BOOLEAN NOT NULL DEFAULT false,
@@ -48,6 +50,8 @@ CREATE TABLE IF NOT EXISTS orders (
 -- Asegurar que las columnas existan si la tabla ya había sido creada previamente
 ALTER TABLE orders ADD COLUMN IF NOT EXISTS preference_id TEXT;
 ALTER TABLE orders ADD COLUMN IF NOT EXISTS items JSONB DEFAULT '[]'::jsonb;
+ALTER TABLE orders ADD COLUMN IF NOT EXISTS phone TEXT NOT NULL DEFAULT '';
+ALTER TABLE orders ADD COLUMN IF NOT EXISTS preferred_size INTEGER NOT NULL DEFAULT 0;
 ALTER TABLE products ADD COLUMN IF NOT EXISTS active BOOLEAN NOT NULL DEFAULT true;
 
 -- 4. Índices para optimizar el rendimiento de las consultas
