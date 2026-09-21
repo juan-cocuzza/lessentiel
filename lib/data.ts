@@ -32,7 +32,7 @@ export const products: Product[] = [
       "Silueta clásica con suela de tracción superior. Para quienes juegan con alma. Confeccionado íntegramente a mano bajo pedido especial con cuero de becerro seleccionado.",
     price: 145000,
     image:
-      "https://images.unsplash.com/photo-1519741497674-611481863552?w=800&q=80",
+      "https://images.unsplash.com/photo-1579338559194-a162d19bf842?w=1200&q=80",
     images: [
       "https://images.unsplash.com/photo-1519741497674-611481863552?w=1200&q=80",
       "https://images.unsplash.com/photo-1606107557195-0a74c706baf1?w=1200&q=80",
