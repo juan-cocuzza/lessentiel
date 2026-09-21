@@ -12,6 +12,7 @@ export type ProductRow = {
   name: string;
   description: string | null;
   price: number;
+  active: boolean;
   stock_quantity: number;
   is_by_request: boolean;
   images: string[];
@@ -25,6 +26,7 @@ export type ProductInsert = {
   name: string;
   description?: string | null;
   price: number;
+  active?: boolean;
   stock_quantity?: number;
   is_by_request?: boolean;
   images?: string[];
@@ -38,6 +40,7 @@ export type ProductUpdate = {
   name?: string;
   description?: string | null;
   price?: number;
+  active?: boolean;
   stock_quantity?: number;
   is_by_request?: boolean;
   images?: string[];

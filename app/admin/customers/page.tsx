@@ -1,9 +1,15 @@
-import Link from "next/link";
+"use client";
+
+import { useEffect, useState } from "react";
+import { MessageCircle, ShoppingBag } from "lucide-react";
+import { supabase, type OrderRow } from "@/lib/supabase";
+import { formatPrice } from "@/lib/utils";
+
+type Customer = { name: string; email: string; phone: string; orders: OrderRow[] };
 
 export default function AdminCustomersPage() {
-  return <Section title="Clientes" description="Consultá el historial y los datos de compradores." />;
-}
-
-function Section({ title, description }: { title: string; description: string }) {
-  return <div className="section-padding mx-auto max-w-5xl"><p className="label-caps">Administración</p><h1 className="heading-section mt-2">{title}</h1><p className="mt-3 text-sm text-ivory/60">{description}</p><div className="mt-8 border border-white/10 bg-charcoal-50/60 p-6 text-sm text-ivory/60">Esta sección está lista para conectarse con las operaciones del atelier.</div><Link href="/admin" className="mt-6 inline-block text-xs font-semibold uppercase tracking-wider text-gold hover:underline">Volver al inicio</Link></div>;
+  const [customers, setCustomers] = useState<Customer[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  useEffect(() => { supabase.from("orders").select("*").order("created_at", { ascending: false }).then(({ data }) => { const grouped = new Map<string, Customer>(); (data || []).forEach((order) => { const key = order.customer_email.toLowerCase(); const current = grouped.get(key) || { name: order.customer_name, email: order.customer_email, phone: (order as OrderRow & { customer_phone?: string }).customer_phone || "", orders: [] }; current.orders.push(order); grouped.set(key, current); }); setCustomers(Array.from(grouped.values())); setIsLoading(false); }); }, []);
+  return <div className="section-padding mx-auto max-w-7xl"><div className="mb-8"><p className="label-caps">Relación</p><h1 className="heading-section mt-2">Clientes</h1><p className="mt-3 text-sm text-ivory/60">Compradores agrupados desde el historial de pedidos.</p></div><div className="overflow-x-auto rounded-sm border border-white/10 bg-charcoal-50/60"><table className="w-full min-w-[820px] text-left text-sm"><thead className="border-b border-white/10 bg-white/5 text-xs uppercase tracking-wider text-gold"><tr><th className="px-4 py-3">Cliente</th><th className="px-4 py-3">Contacto</th><th className="px-4 py-3">Talle habitual</th><th className="px-4 py-3">Historial</th><th className="px-4 py-3" /></tr></thead><tbody className="divide-y divide-white/5">{isLoading ? <tr><td colSpan={5} className="px-4 py-10 text-center text-ivory/50">Cargando clientes...</td></tr> : customers.map((customer) => <tr key={customer.email} className="hover:bg-white/[0.03]"><td className="px-4 py-4"><p className="font-medium text-ivory">{customer.name}</p><p className="text-xs text-ivory/45">{customer.email}</p></td><td className="px-4 py-4 text-ivory/60">{customer.phone || "No informado"}</td><td className="px-4 py-4 text-xs text-ivory/55">ARG / US / CM no disponible en orders</td><td className="px-4 py-4"><span className="flex items-center gap-2 text-ivory/70"><ShoppingBag className="h-4 w-4 text-gold" />{customer.orders.length} pedido{customer.orders.length === 1 ? "" : "s"}<span className="text-xs text-ivory/40">· {formatPrice(customer.orders.reduce((sum, order) => sum + Number(order.total_amount), 0))}</span></span></td><td className="px-4 py-4 text-right"><a href={`https://wa.me/${customer.phone.replace(/\D/g, "")}`} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-emerald-300 hover:underline"><MessageCircle className="h-4 w-4" />WhatsApp</a></td></tr>)}</tbody></table>{!isLoading && customers.length === 0 && <p className="p-10 text-center text-sm text-ivory/50">Todavía no hay compradores registrados.</p>}</div></div>;
 }

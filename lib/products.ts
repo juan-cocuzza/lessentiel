@@ -26,6 +26,7 @@ export function mapSupabaseRowToProduct(row: any): Product {
     slug: row.slug || String(row.name || "botin").toLowerCase().replace(/[^a-z0-9]+/g, "-"),
     description: row.description || "",
     price: Number(row.price) || 0,
+    active: row.active !== false,
     deposit_price: isByRequest
       ? Number(row.deposit_price) || Math.round((Number(row.price) || 0) / 2)
       : undefined,

@@ -21,6 +21,7 @@ CREATE TABLE IF NOT EXISTS products (
   name TEXT NOT NULL,
   description TEXT,
   price NUMERIC(12, 2) NOT NULL DEFAULT 0.00,
+  active BOOLEAN NOT NULL DEFAULT true,
   stock_quantity INTEGER NOT NULL DEFAULT 0,
   is_by_request BOOLEAN NOT NULL DEFAULT false,
   images TEXT[] NOT NULL DEFAULT '{}',
@@ -47,6 +48,7 @@ CREATE TABLE IF NOT EXISTS orders (
 -- Asegurar que las columnas existan si la tabla ya había sido creada previamente
 ALTER TABLE orders ADD COLUMN IF NOT EXISTS preference_id TEXT;
 ALTER TABLE orders ADD COLUMN IF NOT EXISTS items JSONB DEFAULT '[]'::jsonb;
+ALTER TABLE products ADD COLUMN IF NOT EXISTS active BOOLEAN NOT NULL DEFAULT true;
 
 -- 4. Índices para optimizar el rendimiento de las consultas
 CREATE INDEX IF NOT EXISTS idx_products_is_by_request ON products (is_by_request);

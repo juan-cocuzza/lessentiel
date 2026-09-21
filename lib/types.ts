@@ -17,6 +17,7 @@ export interface Product {
   slug: string;
   description: string;
   price: number;
+  active?: boolean;
   deposit_price?: number;
   image: string;
   images?: string[];
