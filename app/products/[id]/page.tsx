@@ -23,7 +23,8 @@ import {
   Info,
   HelpCircle,
 } from "lucide-react";
-import { products, sizeGuide } from "@/lib/data";
+import { sizeGuide } from "@/lib/data";
+import { useProducts } from "@/lib/products";
 import type { Product } from "@/lib/types";
 import { formatPrice, calculateDeposit, cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -53,13 +54,14 @@ export default function ProductDetailPage() {
   const params = useParams();
   const router = useRouter();
   const productId = params?.id as string;
+  const { products } = useProducts();
 
   // Buscar el producto en la lista local (o coincidir con slug/id)
   const product: Product | undefined = useMemo(() => {
     return products.find(
       (p) => p.id === productId || p.slug === productId
     );
-  }, [productId]);
+  }, [productId, products]);
 
   // Lista de imágenes interactivas
   const productImages: string[] = useMemo(() => {

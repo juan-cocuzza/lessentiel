@@ -26,6 +26,9 @@ export function mapSupabaseRowToProduct(row: any): Product {
     slug: row.slug || String(row.name || "botin").toLowerCase().replace(/[^a-z0-9]+/g, "-"),
     description: row.description || "",
     price: Number(row.price) || 0,
+    deposit_price: isByRequest
+      ? Number(row.deposit_price) || Math.round((Number(row.price) || 0) / 2)
+      : undefined,
     image: images[0] || "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=800&q=80",
     images: images.length > 0 ? images : ["https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=1200&q=80"],
     is_by_request: isByRequest,
@@ -35,6 +38,8 @@ export function mapSupabaseRowToProduct(row: any): Product {
     featured: Boolean(row.featured),
     specs: row.specs || {
       sole_type: row.sole_type || "FG (Césped Firme)",
+      upper_material:
+        row.upper_material || row.material || "Cuero de alta calidad",
       material: row.material || "Cuero de alta calidad",
       weight: row.weight,
       origin: row.origin,

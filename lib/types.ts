@@ -4,7 +4,8 @@ export type ProductCategory = "clasicos" | "modernos" | "edicion-limitada";
 
 export interface ProductSpecs {
   sole_type: string; // Tipo de suela: FG, SG, AG, Mixta, etc.
-  material: string;  // Material: Cuero vacuno, K-Leather, etc.
+  upper_material: string; // Material del empeine: cuero, sintético, etc.
+  material?: string; // Alias legado para registros existentes.
   weight?: string;   // Peso aproximado: ej. "198g"
   origin?: string;   // Taller / Confección: ej. "Montebelluna, Italia"
 }
@@ -16,6 +17,7 @@ export interface Product {
   slug: string;
   description: string;
   price: number;
+  deposit_price?: number;
   image: string;
   images?: string[];
   is_by_request?: boolean;

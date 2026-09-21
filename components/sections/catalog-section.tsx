@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useMemo } from "react";
-import { products } from "@/lib/data";
+import { useProducts } from "@/lib/products";
 import type { Product } from "@/lib/types";
 import {
   CatalogFilters,
@@ -13,6 +13,7 @@ import { SizeGuide } from "@/components/product/size-guide";
 import { Sparkles, Trophy } from "lucide-react";
 
 export function CatalogSection() {
+  const { products } = useProducts();
   const [selectedCategory, setSelectedCategory] = useState<CategoryFilter>("all");
   const [selectedSize, setSelectedSize] = useState<number | null>(null);
   const [selectedSort, setSelectedSort] = useState<SortOption>("popular");
@@ -47,7 +48,7 @@ export function CatalogSection() {
     }
 
     return result;
-  }, [selectedCategory, selectedSize, selectedSort]);
+  }, [products, selectedCategory, selectedSize, selectedSort]);
 
   return (
     <section id="catalogo" className="section-padding scroll-mt-24">
