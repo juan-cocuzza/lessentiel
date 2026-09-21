@@ -316,7 +316,7 @@ export default function AdminOrdersPage() {
                   value={passwordInput}
                   onChange={(e) => setPasswordInput(e.target.value)}
                   placeholder="Ingresá ADMIN_PASSWORD"
-                  className="w-full rounded-sm border border-white/15 bg-charcoal-50 px-4 py-2.5 pr-10 text-sm text-ivory placeholder:text-ivory/30 focus:border-gold focus:outline-none focus:ring-1 focus:ring-gold"
+                  className="field-input pr-10"
                   autoFocus
                 />
                 <button
@@ -497,7 +497,7 @@ export default function AdminOrdersPage() {
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder="Buscar por cliente, email o ID (#...)"
-              className="w-full rounded-sm border border-white/10 bg-charcoal-50 pl-10 pr-4 py-2 text-xs text-ivory placeholder:text-ivory/30 focus:border-gold/60 focus:outline-none"
+              className="field-input pl-10 py-2 text-xs"
             />
           </div>
 
@@ -510,7 +510,7 @@ export default function AdminOrdersPage() {
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="rounded-sm border border-white/10 bg-charcoal-50 px-3 py-2 text-xs text-ivory focus:border-gold/60 focus:outline-none"
+              className="field-input w-auto py-2 text-xs"
             >
               <option value="all">Todos los estados</option>
               <option value="entrada-en-calor">🔥 Entrada en calor</option>
@@ -523,7 +523,7 @@ export default function AdminOrdersPage() {
             <select
               value={typeFilter}
               onChange={(e) => setTypeFilter(e.target.value)}
-              className="rounded-sm border border-white/10 bg-charcoal-50 px-3 py-2 text-xs text-ivory focus:border-gold/60 focus:outline-none"
+              className="field-input w-auto py-2 text-xs"
             >
               <option value="all">Todos los tipos</option>
               <option value="preorder">Por Encargo</option>
@@ -707,7 +707,7 @@ export default function AdminOrdersPage() {
                                 )
                               }
                               className={cn(
-                                "w-full appearance-none rounded-sm border px-3 py-2 text-xs font-medium transition-colors focus:outline-none focus:ring-1 focus:ring-gold pr-8 cursor-pointer",
+                                "field-input w-full appearance-none pr-8 text-xs font-medium cursor-pointer",
                                 currentStatusObj?.badgeClass ||
                                   "border-white/10 bg-charcoal-50 text-ivory",
                                 isUpdating && "opacity-50 pointer-events-none"
@@ -848,7 +848,7 @@ export default function AdminOrdersPage() {
                       type="text"
                       readOnly
                       value={getTrackingUrl(notifiedOrder.id)}
-                      className="flex-1 rounded-sm border border-white/10 bg-charcoal px-3 py-1.5 font-mono text-[11px] text-ivory/80 focus:outline-none"
+                      className="field-input flex-1 py-1.5 font-mono text-[11px]"
                     />
                     <Button
                       size="sm"

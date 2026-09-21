@@ -75,6 +75,18 @@
   .label-caps {
     @apply font-sans text-xs font-semibold uppercase tracking-[0.25em] text-gold;
   }
+
+  .field-label {
+    @apply mb-1 block text-xs font-semibold uppercase tracking-wider text-amber-100/80;
+  }
+
+  .field-input {
+    @apply w-full rounded-sm border border-zinc-800 bg-zinc-900 px-3 py-2.5 text-sm text-white placeholder-zinc-500 outline-none transition-colors focus:border-amber-500 focus:ring-1 focus:ring-amber-500;
+  }
+
+  .field-input option {
+    @apply bg-zinc-900 text-white;
+  }
 }
 
 @layer utilities {

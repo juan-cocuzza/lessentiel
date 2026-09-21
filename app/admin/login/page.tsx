@@ -65,7 +65,7 @@ export default function AdminLoginPage() {
               type={showPassword ? "text" : "password"}
               value={password}
               onChange={(event) => setPassword(event.target.value)}
-              className="w-full rounded-sm border border-white/15 bg-charcoal-50 px-4 py-3 pr-11 text-sm text-ivory outline-none focus:border-gold focus:ring-1 focus:ring-gold"
+              className="field-input pr-11"
               autoComplete="current-password"
               autoFocus
               required
