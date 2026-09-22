@@ -17,9 +17,12 @@ const navLinks = [
 export function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
   const { openCart, totalCount } = useCart();
 
   useEffect(() => {
+    setIsMounted(true);
+
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 50);
     };
@@ -70,7 +73,7 @@ export function Navbar() {
             aria-label="Abrir carrito de compras"
           >
             <ShoppingBag className="h-5 w-5" />
-            {totalCount > 0 && (
+            {isMounted && totalCount > 0 && (
               <span className="absolute -right-1.5 -top-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-gold text-[10px] font-bold font-mono text-charcoal shadow-md">
                 {totalCount}
               </span>

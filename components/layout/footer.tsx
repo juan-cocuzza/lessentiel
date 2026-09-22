@@ -66,7 +66,7 @@ export function Footer() {
           <p className="font-display text-lg italic text-gold">
             La pelota no se mancha.
           </p>
-          <p className="mt-4 text-xs text-ivory/40">
+          <p suppressHydrationWarning className="mt-4 text-xs text-ivory/40">
           © {new Date().getFullYear()} L&apos;essentiel. Todos los derechos
           reservados.
           </p>

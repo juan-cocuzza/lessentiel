@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   SlidersHorizontal,
   ArrowUpDown,
@@ -53,6 +53,11 @@ export function CatalogFilters({
 }: CatalogFiltersProps) {
   const [sizeStandard, setSizeStandard] = useState<SizeStandard>("ARG");
   const [isOpenMobile, setIsOpenMobile] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   const activeFiltersCount =
     (selectedCategory !== "all" ? 1 : 0) + (selectedSize !== null ? 1 : 0);
@@ -94,7 +99,7 @@ export function CatalogFilters({
               )}
             </div>
             <p className="text-xs text-ivory/50">
-              {totalProducts !== undefined
+              {isMounted && totalProducts !== undefined
                 ? `${totalProducts} modelo${totalProducts !== 1 ? "s" : ""} encontrado${totalProducts !== 1 ? "s" : ""}`
                 : "Personalizá tu búsqueda de botines"}
             </p>

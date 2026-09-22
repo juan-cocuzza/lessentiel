@@ -35,10 +35,10 @@ async function fileToDataUrl(file: File) {
 async function uploadProductImage(file: File) {
   const path = `${Date.now()}-${file.name.replace(/[^a-zA-Z0-9._-]/g, "-")}`;
   const { error } = await supabase.storage.from("product-images").upload(path, file, { upsert: true });
-  if (!error) {
-    return supabase.storage.from("product-images").getPublicUrl(path).data.publicUrl;
+  if (error) {
+    throw error;
   }
-  return fileToDataUrl(file);
+  return supabase.storage.from("product-images").getPublicUrl(path).data.publicUrl;
 }
 
 export default function AdminCatalogPage() {
@@ -83,6 +83,8 @@ export default function AdminCatalogPage() {
       const uploaded = await Promise.all(Array.from(files).map(uploadProductImage));
       setForm((current) => ({ ...current, images: [...current.images, ...uploaded] }));
       setMessage("Imágenes listas para guardar.");
+    } catch {
+      setMessage("No se pudieron subir las imágenes a Storage; revisá los permisos.");
     } finally {
       setIsUploading(false);
     }
@@ -136,12 +138,22 @@ export default function AdminCatalogPage() {
       setProducts((current) => [localProduct, ...current]);
       let persistenceError = false;
       try {
-        persistenceError = Boolean((await supabase.from("products").insert(payload)).error);
+        const { data, error } = await supabase.from("products").insert([payload]).select();
+        if (error) {
+          persistenceError = true;
+        } else if (data?.[0]) {
+          setProducts((current) => current.map((product) => product.id === localProduct.id ? { ...product, id: data[0].id } : product));
+        }
       } catch {
         persistenceError = true;
       }
       if (persistenceError) persistLocalProduct(localProduct);
-      setMessage(persistenceError ? "Creado localmente; revisá los permisos de Storage/Supabase." : "Producto creado.");
+      if (persistenceError) {
+        setMessage("Creado localmente; revisá los permisos de Storage/Supabase.");
+      } else {
+        setMessage("¡Producto guardado con éxito en Supabase!");
+        setForm({ ...defaultForm, images: [] });
+      }
     }
     setEditingProduct(null);
     setIsCreating(false);
