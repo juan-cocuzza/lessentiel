@@ -37,20 +37,20 @@ export function SizeGuide({ trigger }: SizeGuideProps) {
           </DialogDescription>
         </DialogHeader>
 
-        <div className="mt-4 overflow-hidden rounded-sm border border-white/10">
+        <div className="mt-4 overflow-x-auto rounded-sm border border-white/10">
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-white/10 bg-white/5">
-                <th className="px-4 py-3 text-left font-semibold uppercase tracking-wider text-gold">
+                <th className="px-2 py-3 sm:px-4 text-left font-semibold uppercase tracking-wider text-gold">
                   AR
                 </th>
-                <th className="px-4 py-3 text-left font-semibold uppercase tracking-wider text-gold">
+                <th className="px-2 py-3 sm:px-4 text-left font-semibold uppercase tracking-wider text-gold">
                   CM
                 </th>
-                <th className="px-4 py-3 text-left font-semibold uppercase tracking-wider text-gold">
+                <th className="px-2 py-3 sm:px-4 text-left font-semibold uppercase tracking-wider text-gold">
                   US
                 </th>
-                <th className="px-4 py-3 text-left font-semibold uppercase tracking-wider text-gold">
+                <th className="px-2 py-3 sm:px-4 text-left font-semibold uppercase tracking-wider text-gold">
                   UK
                 </th>
               </tr>
@@ -63,12 +63,12 @@ export function SizeGuide({ trigger }: SizeGuideProps) {
                     index % 2 === 0 ? "bg-transparent" : "bg-white/[0.02]"
                   }
                 >
-                  <td className="px-4 py-3 font-medium text-ivory">
+                  <td className="px-2 py-3 sm:px-4 font-medium text-ivory">
                     {entry.size}
                   </td>
-                  <td className="px-4 py-3 text-ivory/70">{entry.cm}</td>
-                  <td className="px-4 py-3 text-ivory/70">{entry.us}</td>
-                  <td className="px-4 py-3 text-ivory/70">{entry.uk}</td>
+                  <td className="px-2 py-3 sm:px-4 text-ivory/70">{entry.cm}</td>
+                  <td className="px-2 py-3 sm:px-4 text-ivory/70">{entry.us}</td>
+                  <td className="px-2 py-3 sm:px-4 text-ivory/70">{entry.uk}</td>
                 </tr>
               ))}
             </tbody>

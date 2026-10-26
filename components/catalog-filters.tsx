@@ -4,14 +4,12 @@ import React, { useEffect, useState } from "react";
 import {
   SlidersHorizontal,
   ArrowUpDown,
-  X,
   Sparkles,
   Zap,
   Shield,
   RotateCcw,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { Badge } from "@/components/ui/badge";
 
 export type CategoryFilter = "all" | "stock" | "preorder";
 export type SortOption = "popular" | "price-asc" | "price-desc";
@@ -88,7 +86,7 @@ export function CatalogFilters({
             <SlidersHorizontal className="h-4 w-4" />
           </div>
           <div>
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2">
               <h3 className="font-display text-base font-semibold text-ivory">
                 Filtros de Catálogo
               </h3>
@@ -123,6 +121,8 @@ export function CatalogFilters({
           <button
             type="button"
             onClick={() => setIsOpenMobile(!isOpenMobile)}
+            aria-expanded={isOpenMobile}
+            aria-controls="catalog-filter-options"
             className="flex items-center gap-2 rounded-sm border border-white/15 bg-charcoal-50 px-3 py-1.5 text-xs text-ivory sm:hidden"
           >
             <span>{isOpenMobile ? "Ocultar" : "Mostrar filtros"}</span>
@@ -132,6 +132,7 @@ export function CatalogFilters({
 
       {/* Contenedor de filtros (siempre visible en desktop, colapsable en mobile) */}
       <div
+        id="catalog-filter-options"
         className={cn(
           "mt-5 space-y-6 sm:block",
           isOpenMobile ? "block" : "hidden sm:block"

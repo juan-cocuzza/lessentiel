@@ -41,7 +41,7 @@ export function SizeGuideModal({ selectedSize, trigger }: SizeGuideModalProps) {
           </button>
         )}
       </DialogTrigger>
-      <DialogContent className="max-w-2xl border border-gold/40 bg-charcoal-100 p-6 text-ivory sm:p-8">
+      <DialogContent className="max-w-2xl border border-gold/40 bg-charcoal-100 p-4 sm:p-6 text-ivory sm:p-8">
         <DialogHeader>
           <div className="flex items-center gap-2 text-gold">
             <Ruler className="h-5 w-5" />

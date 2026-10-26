@@ -8,20 +8,16 @@ import {
   CheckCircle2,
   Trophy,
   ArrowRight,
-  Flame,
-  ShieldCheck,
   Copy,
   Check,
   ShoppingBag,
-  ExternalLink,
   MessageCircle,
-  HelpCircle,
   Clock,
   Sparkles,
   CreditCard,
 } from "lucide-react";
 import { supabase, type OrderRow } from "@/lib/supabase";
-import { formatPrice, cn } from "@/lib/utils";
+import { formatPrice } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useCart } from "@/lib/cart-context";
@@ -31,10 +27,6 @@ function CheckoutSuccessContent() {
   const orderId =
     searchParams.get("orderId") ||
     searchParams.get("external_reference") ||
-    "";
-  const paymentId =
-    searchParams.get("payment_id") ||
-    searchParams.get("collection_id") ||
     "";
   const paymentTypeParam = searchParams.get("paymentType");
 
@@ -101,6 +93,7 @@ function CheckoutSuccessContent() {
 
   return (
     <div className="section-padding min-h-screen bg-[#0A0A0B] text-ivory">
+      {isLoading && <p role="status" className="mb-4 text-center text-sm text-gold motion-safe:animate-pulse">Cargando los datos de tu pedido...</p>}
       {/* Resplandor dorado de fondo */}
       <div className="pointer-events-none fixed inset-0 overflow-hidden">
         <div className="absolute -top-32 left-1/2 h-96 w-96 -translate-x-1/2 rounded-full bg-gold/15 blur-3xl" />

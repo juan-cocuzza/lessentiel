@@ -6,6 +6,7 @@ import { Footer } from "@/components/layout/footer";
 import { CartProvider } from "@/lib/cart-context";
 import { CartDrawer } from "@/components/cart-drawer";
 import "@/app/globals.css";
+import { siteDescription, siteTitle, siteUrl } from "@/lib/site-metadata";
 
 const playfair = Playfair_Display({
   subsets: ["latin"],
@@ -20,12 +21,12 @@ const montserrat = Montserrat({
 });
 
 export const metadata: Metadata = {
+  metadataBase: siteUrl,
   title: {
-    default: "L'essentiel | Botines de Fútbol Premium",
+    default: siteTitle,
     template: "%s | L'essentiel",
   },
-  description:
-    "Botines de fútbol de alta gama con el alma de Maradona. Stock inmediato y pedidos por encargo exclusivos.",
+  description: siteDescription,
   keywords: [
     "botines de fútbol",
     "fútbol premium",
@@ -34,27 +35,25 @@ export const metadata: Metadata = {
     "calzado deportivo",
   ],
   openGraph: {
-    title: "L'essentiel | Botines de Fútbol Premium",
-    description:
-      "Botines de fútbol premium con la mística de Maradona, stock inmediato y piezas únicas por encargo.",
+    title: siteTitle,
+    description: siteDescription,
     type: "website",
     locale: "es_AR",
     siteName: "L'essentiel",
     images: [
       {
-        url: "/opengraph-image",
+        url: "/opengraph-image.png",
         width: 1200,
         height: 630,
-        alt: "L'essentiel | Botines de Fútbol Premium",
+        alt: siteTitle,
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "L'essentiel | Botines de Fútbol Premium",
-    description:
-      "Botines premium con la mística de Maradona y confección por encargo.",
-    images: ["/opengraph-image"],
+    title: siteTitle,
+    description: siteDescription,
+    images: ["/opengraph-image.png"],
   },
 };
 

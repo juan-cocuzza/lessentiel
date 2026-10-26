@@ -8,10 +8,10 @@ import { Button } from "@/components/ui/button";
 import { useCart } from "@/lib/cart-context";
 
 const navLinks = [
-  { href: "#stock", label: "Stock Inmediato" },
-  { href: "#encargo", label: "Pedidos por Encargo" },
-  { href: "#seguimiento", label: "Seguimiento" },
-  { href: "#contacto", label: "Contacto" },
+  { href: "/#stock", label: "Stock Inmediato" },
+  { href: "/#encargo", label: "Pedidos por Encargo" },
+  { href: "/#seguimiento", label: "Seguimiento" },
+  { href: "/#contacto", label: "Contacto" },
 ];
 
 export function Navbar() {

@@ -1,4 +1,4 @@
-import { OrderRow, OrderStatus } from "./supabase";
+import { OrderRow } from "./supabase";
 import { formatPrice } from "./utils";
 
 /**

@@ -2,7 +2,6 @@ import React from "react";
 import Link from "next/link";
 import { Metadata } from "next";
 import { OrderTracking } from "@/components/order-tracking";
-import { Button } from "@/components/ui/button";
 import { ArrowLeft, MessageCircle, ShieldCheck } from "lucide-react";
 
 interface OrderTrackingPageProps {
@@ -16,7 +15,8 @@ export async function generateMetadata({
 }: OrderTrackingPageProps): Promise<Metadata> {
   const shortId = params.id ? params.id.slice(0, 8) : "";
   return {
-    title: `Seguimiento de Orden #${shortId} | L'essentiel`,
+    title: `Seguimiento de Orden #${shortId}`,
+    robots: { index: false, follow: false },
     description: `Seguí el minuto a minuto de tu pedido #${shortId} en L'essentiel.`,
   };
 }

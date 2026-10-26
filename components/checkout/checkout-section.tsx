@@ -39,7 +39,7 @@ export function CheckoutSection() {
             type="button"
             onClick={() => setPaymentMethod("mercadopago")}
             className={cn(
-              "flex w-full items-center gap-4 rounded-sm border p-5 text-left transition-all duration-300",
+              "flex w-full flex-wrap items-center gap-3 sm:gap-4 rounded-sm border p-5 text-left transition-all duration-300",
               paymentMethod === "mercadopago"
                 ? "border-gold/40 bg-gold/5 ring-1 ring-gold/20"
                 : "border-white/10 bg-charcoal-50/50 hover:border-white/20"
@@ -54,7 +54,7 @@ export function CheckoutSection() {
                 Tarjetas, cuotas y dinero en cuenta
               </p>
             </div>
-            <div className="text-right">
+            <div className="ml-auto text-right">
               <p className="font-display text-lg text-ivory">
                 {formatPrice(SAMPLE_TOTAL)}
               </p>
@@ -65,7 +65,7 @@ export function CheckoutSection() {
             type="button"
             onClick={() => setPaymentMethod("transferencia")}
             className={cn(
-              "relative flex w-full items-center gap-4 overflow-hidden rounded-sm border p-5 text-left transition-all duration-300",
+              "relative flex w-full flex-wrap items-center gap-3 sm:gap-4 overflow-hidden rounded-sm border p-5 text-left transition-all duration-300",
               paymentMethod === "transferencia"
                 ? "border-gold/40 bg-gold/5 ring-1 ring-gold/20"
                 : "border-white/10 bg-charcoal-50/50 hover:border-white/20"
@@ -83,7 +83,7 @@ export function CheckoutSection() {
                 Descuento automático del 10%
               </p>
             </div>
-            <div className="text-right">
+            <div className="ml-auto text-right">
               <p className="text-sm text-ivory/40 line-through">
                 {formatPrice(SAMPLE_TOTAL)}
               </p>
@@ -118,7 +118,7 @@ export function CheckoutSection() {
                   <Percent className="h-4 w-4" />
                   Ahorrás {formatPrice(discount)} con transferencia
                 </div>
-                <div className="space-y-2 rounded-sm bg-white/5 p-4 font-mono text-sm text-ivory/70">
+                <div className="space-y-2 rounded-sm bg-white/5 p-3 font-mono text-xs break-all sm:p-4 sm:text-sm text-ivory/70">
                   <p>
                     <span className="text-ivory/40">CBU:</span> 0000003100010000000001
                   </p>

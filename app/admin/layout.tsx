@@ -6,7 +6,6 @@ import { useState } from "react";
 import {
   BarChart3,
   Boxes,
-  ChevronDown,
   ClipboardList,
   Home,
   LogOut,

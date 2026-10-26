@@ -1,4 +1,3 @@
-import { useState, useEffect } from "react";
 import { supabase } from "./supabase";
 import type { Product } from "./types";
 import { MOCK_BOOTS, getMockProductById } from "./mock-data";
@@ -24,7 +23,7 @@ export function persistLocalProduct(product: Product) {
   localStorage.setItem(LOCAL_PRODUCTS_STORAGE_KEY, JSON.stringify(next));
 }
 
-function mergeLocalProducts(products: Product[]) {
+export function mergeLocalProducts(products: Product[]) {
   const localProducts = getLocalProducts();
   const localIds = new Set(localProducts.map((product) => product.id));
   return [...localProducts, ...products.filter((product) => !localIds.has(product.id))];
@@ -147,36 +146,5 @@ export async function getProductByIdWithFallback(
     product: localProduct || getMockProductById(idOrSlug),
     fromFallback: true,
   };
-}
-
-/**
- * Hook de React para consumir los productos en componentes de cliente
- * con carga instantánea de mock-data y sincronización reactiva con Supabase.
- */
-export function useProducts() {
-  const [products, setProducts] = useState<Product[]>(() => mergeLocalProducts(MOCK_BOOTS));
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [isUsingFallback, setIsUsingFallback] = useState<boolean>(true);
-
-  useEffect(() => {
-    let isMounted = true;
-
-    async function load() {
-      const result = await getProductsWithFallback();
-      if (isMounted) {
-        setProducts(result.products);
-        setIsUsingFallback(result.fromFallback);
-        setIsLoading(false);
-      }
-    }
-
-    load();
-
-    return () => {
-      isMounted = false;
-    };
-  }, []);
-
-  return { products, isLoading, isUsingFallback };
 }
 

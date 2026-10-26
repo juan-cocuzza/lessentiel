@@ -3,7 +3,7 @@
 import React, { Suspense } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { Clock, ArrowRight, ShoppingBag, MessageCircle, AlertCircle } from "lucide-react";
+import { Clock, ArrowRight, ShoppingBag } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 function CheckoutPendingContent() {

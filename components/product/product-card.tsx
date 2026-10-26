@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
+import { ProductImage as Image } from "@/components/product/product-image";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import type { Product } from "@/lib/types";
@@ -9,7 +9,6 @@ import { formatPrice, calculateDeposit, cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { SizeGuide } from "@/components/product/size-guide";
-import { PreorderDialog } from "@/components/product/preorder-dialog";
 import { useCart } from "@/lib/cart-context";
 
 interface ProductCardProps {
@@ -20,7 +19,6 @@ interface ProductCardProps {
 export function ProductCard({ product, index = 0 }: ProductCardProps) {
   const [selectedSize, setSelectedSize] = useState<number | null>(null);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
-  const [showPreorder, setShowPreorder] = useState(false);
   const { addItem } = useCart();
   const isStock = product.availability === "stock";
   const deposit = calculateDeposit(product.price);
@@ -33,7 +31,7 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
         initial={{ opacity: 0, y: 24 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "-50px" }}
-        transition={{ duration: 0.5, delay: index * 0.1 }}
+        transition={{ duration: 0.5, delay: Math.min(index, 5) * 0.06 }}
         className="group flex flex-col overflow-hidden rounded-sm border border-white/10 bg-charcoal-50/50 transition-all duration-300 hover:border-gold/30 hover:shadow-[0_8px_40px_rgba(201,169,98,0.12)]"
       >
         <Link
@@ -41,12 +39,12 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
           className="relative aspect-square overflow-hidden bg-graphite block cursor-pointer"
         >
           <Image
-            unoptimized
             src={activeImage}
             alt={product.name}
             fill
+            loading="lazy"
             className="object-cover transition-transform duration-700 group-hover:scale-105"
-            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+            sizes="(max-width: 639px) calc(100vw - 32px), (max-width: 1023px) calc((100vw - 72px) / 2), (max-width: 1343px) calc((100vw - 112px) / 3), 411px"
           />
           <div className="absolute left-3 top-3">
             <Badge variant={isStock ? "stock" : "preorder"}>
@@ -70,7 +68,7 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
                     : "border-white/10 opacity-60 hover:opacity-100"
                 )}
               >
-                <Image unoptimized src={image} alt="" fill className="object-cover" sizes="40px" />
+                <Image src={image} alt="" fill className="object-cover" sizes="40px" />
               </button>
             ))}
           </div>
@@ -149,12 +147,6 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
         </div>
       </motion.article>
 
-      <PreorderDialog
-        product={product}
-        selectedSize={selectedSize}
-        open={showPreorder}
-        onOpenChange={setShowPreorder}
-      />
     </>
   );
 }

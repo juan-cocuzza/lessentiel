@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useMemo, useTransition } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Lock,
@@ -23,8 +23,6 @@ import {
   MessageCircle,
   Copy,
   ChevronDown,
-  Clock,
-  ArrowRight,
 } from "lucide-react";
 import { supabase, type OrderRow, type OrderStatus } from "@/lib/supabase";
 import { formatPrice, cn } from "@/lib/utils";

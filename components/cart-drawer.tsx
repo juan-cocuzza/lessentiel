@@ -1,23 +1,20 @@
 "use client";
 
 import React, { useState } from "react";
-import Image from "next/image";
+import { ProductImage as Image } from "@/components/product/product-image";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
+import * as DialogPrimitive from "@radix-ui/react-dialog";
 import {
   X,
   ShoppingBag,
   Plus,
   Minus,
   Trash2,
-  Shield,
-  Zap,
   Landmark,
-  Percent,
   ArrowRight,
   Sparkles,
   Info,
-  Check,
   CreditCard,
   Lock,
 } from "lucide-react";
@@ -51,6 +48,7 @@ export function CartDrawer() {
   const [preferredSize, setPreferredSize] = useState<string>("");
   const [showEmailPrompt, setShowEmailPrompt] = useState<boolean>(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const previousFocus = React.useRef<HTMLElement | null>(null);
 
   React.useEffect(() => {
     try {
@@ -168,10 +166,13 @@ export function CartDrawer() {
   };
 
   return (
+    <DialogPrimitive.Root open={isOpen} onOpenChange={(open) => { if (!open) closeCart(); }}>
     <AnimatePresence>
       {isOpen && (
+        <DialogPrimitive.Portal forceMount>
         <div className="fixed inset-0 z-50 overflow-hidden">
           {/* Overlay oscuro con desenfoque */}
+          <DialogPrimitive.Overlay asChild forceMount>
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -179,26 +180,38 @@ export function CartDrawer() {
             onClick={closeCart}
             className="fixed inset-0 bg-black/80 backdrop-blur-sm transition-opacity"
           />
+          </DialogPrimitive.Overlay>
 
-          <div className="fixed inset-y-0 right-0 flex max-w-full pl-10">
+          <div className="fixed inset-y-0 right-0 flex max-w-full sm:pl-10">
             {/* Panel lateral deslizante */}
+            <DialogPrimitive.Content
+              asChild
+              onOpenAutoFocus={() => { previousFocus.current = document.activeElement as HTMLElement; }}
+              onCloseAutoFocus={(event) => {
+                event.preventDefault();
+                previousFocus.current?.focus();
+              }}
+            >
             <motion.div
               initial={{ x: "100%" }}
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
               transition={{ type: "spring", damping: 28, stiffness: 280 }}
-              className="w-screen max-w-md bg-charcoal-100 border-l border-white/10 shadow-2xl flex flex-col justify-between text-ivory"
+              className="h-[100dvh] w-screen max-w-md bg-charcoal-100 border-l border-white/10 shadow-2xl flex flex-col overflow-y-auto overscroll-contain text-ivory"
             >
               {/* Encabezado del Carrito */}
-              <div className="border-b border-white/10 px-6 py-5 flex items-center justify-between bg-charcoal-50/70">
+              <div className="border-b border-white/10 px-4 py-4 sm:px-6 shrink-0 flex items-center justify-between bg-charcoal-50/70">
                 <div className="flex items-center gap-3">
                   <div className="flex h-9 w-9 items-center justify-center rounded-sm border border-gold/30 bg-gold/10 text-gold">
                     <ShoppingBag className="h-5 w-5" />
                   </div>
                   <div>
+                    <DialogPrimitive.Title asChild>
                     <h2 className="font-display text-lg font-semibold text-ivory">
                       Bolsa de Compras
                     </h2>
+                    </DialogPrimitive.Title>
+                    <DialogPrimitive.Description className="sr-only">Revisá tus botines, talles y cantidades antes de continuar al pago.</DialogPrimitive.Description>
                     <p className="text-xs text-ivory/50">
                       {totalCount} {totalCount === 1 ? "artículo" : "artículos"}{" "}
                       seleccionado{totalCount === 1 ? "" : "s"}
@@ -217,7 +230,7 @@ export function CartDrawer() {
               </div>
 
               {/* Contenido / Lista de Items */}
-              <div className="flex-1 overflow-y-auto px-6 py-6 space-y-4">
+              <div className="px-4 py-4 sm:px-6 space-y-4">
                 {items.length === 0 ? (
                   <div className="flex flex-col items-center justify-center py-20 text-center">
                     <div className="flex h-16 w-16 items-center justify-center rounded-full border border-white/10 bg-white/5 text-ivory/30 mb-4">
@@ -235,7 +248,7 @@ export function CartDrawer() {
                       variant="outline"
                       className="mt-6"
                     >
-                      <Link href="/#stock">Explorar Catálogo</Link>
+                      <Link href="/#catalogo">Explorar Catálogo</Link>
                     </Button>
                   </div>
                 ) : (
@@ -259,7 +272,7 @@ export function CartDrawer() {
                           </div>
 
                           {/* Info */}
-                          <div className="flex-1 flex flex-col justify-between">
+                          <div className="min-w-0 flex-1 flex flex-col justify-between">
                             <div>
                               <div className="flex items-start justify-between gap-2">
                                 <h4 className="font-display text-sm font-semibold text-ivory line-clamp-1">
@@ -298,7 +311,7 @@ export function CartDrawer() {
                             </div>
 
                             {/* Controles de cantidad y precio */}
-                            <div className="mt-3 flex items-center justify-between">
+                            <div className="mt-3 flex flex-wrap items-center justify-between gap-2">
                               <div className="flex items-center rounded-sm border border-white/15 bg-charcoal-50">
                                 <button
                                   type="button"
@@ -487,7 +500,7 @@ export function CartDrawer() {
                     )}
 
                     {errorMsg && (
-                      <p className="text-xs text-red-400 bg-red-500/10 p-2 rounded-sm border border-red-500/30">
+                      <p role="alert" className="text-xs text-red-400 bg-red-500/10 p-2 rounded-sm border border-red-500/30">
                         {errorMsg}
                       </p>
                     )}
@@ -497,7 +510,7 @@ export function CartDrawer() {
 
               {/* Pie con Resumen de Totales y Botón de Pago */}
               {items.length > 0 && (
-                <div className="border-t border-white/10 bg-charcoal-50/90 p-6 space-y-4">
+                <div className="border-t border-white/10 bg-charcoal-50/90 p-4 sm:p-6 shrink-0 pb-[max(1rem,env(safe-area-inset-bottom))] space-y-4">
                   <div className="space-y-1.5 text-xs">
                     <div className="flex justify-between text-ivory/60">
                       <span>Subtotal</span>
@@ -515,7 +528,7 @@ export function CartDrawer() {
                       </div>
                     )}
 
-                    <div className="flex justify-between border-t border-white/10 pt-2 text-sm">
+                    <div className="flex flex-wrap justify-between gap-2 border-t border-white/10 pt-2 text-sm">
                       <span className="font-medium text-ivory">
                         {hasPreorder ? "Total a abonar hoy (Seña):" : "Total a abonar:"}
                       </span>
@@ -535,6 +548,7 @@ export function CartDrawer() {
                   <Button
                     onClick={handleCheckout}
                     disabled={isCheckingOut}
+                    aria-busy={isCheckingOut}
                     size="lg"
                     className="w-full gap-2 text-sm font-bold tracking-wider uppercase bg-gradient-to-r from-gold to-gold-light text-charcoal shadow-[0_0_25px_rgba(201,169,98,0.3)] hover:shadow-[0_0_35px_rgba(201,169,98,0.5)]"
                   >
@@ -556,7 +570,7 @@ export function CartDrawer() {
                     )}
                   </Button>
 
-                  <div className="flex items-center justify-center gap-3 text-[10px] text-ivory/40">
+                  <div className="flex flex-wrap items-center justify-center gap-2 text-[10px] text-ivory/40">
                     <span className="flex items-center gap-1">
                       <Lock className="h-3 w-3 text-gold" /> Pago 100% Seguro
                     </span>
@@ -566,10 +580,13 @@ export function CartDrawer() {
                 </div>
               )}
             </motion.div>
+            </DialogPrimitive.Content>
           </div>
         </div>
+        </DialogPrimitive.Portal>
       )}
     </AnimatePresence>
+    </DialogPrimitive.Root>
   );
 }
 

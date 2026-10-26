@@ -11,7 +11,7 @@ import {
   Shirt,
   Users,
 } from "lucide-react";
-import { useProducts } from "@/lib/products";
+import { useProducts } from "@/lib/use-products";
 import { supabase } from "@/lib/supabase";
 import { cn } from "@/lib/utils";
 

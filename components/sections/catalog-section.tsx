@@ -1,8 +1,7 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
-import { useProducts } from "@/lib/products";
-import type { Product } from "@/lib/types";
+import React, { useState, useMemo, useTransition, useEffect } from "react";
+import { useProducts } from "@/lib/use-products";
 import {
   CatalogFilters,
   type CategoryFilter,
@@ -10,13 +9,24 @@ import {
 } from "@/components/catalog-filters";
 import { ProductCard } from "@/components/product/product-card";
 import { SizeGuide } from "@/components/product/size-guide";
-import { Sparkles, Trophy } from "lucide-react";
+import { Loader2, Trophy } from "lucide-react";
 
 export function CatalogSection() {
-  const { products } = useProducts();
+  const { products, isLoading } = useProducts();
+  const [isPending, startTransition] = useTransition();
   const [selectedCategory, setSelectedCategory] = useState<CategoryFilter>("all");
   const [selectedSize, setSelectedSize] = useState<number | null>(null);
   const [selectedSort, setSelectedSort] = useState<SortOption>("popular");
+
+  useEffect(() => {
+    const syncCategory = () => {
+      const category = window.location.hash === "#stock" ? "stock" : window.location.hash === "#encargo" ? "preorder" : null;
+      if (category) startTransition(() => setSelectedCategory(category));
+    };
+    syncCategory();
+    window.addEventListener("hashchange", syncCategory);
+    return () => window.removeEventListener("hashchange", syncCategory);
+  }, []);
 
   // Filtrado y ordenamiento de productos
   const filteredProducts = useMemo(() => {
@@ -51,7 +61,9 @@ export function CatalogSection() {
   }, [products, selectedCategory, selectedSize, selectedSort]);
 
   return (
-    <section id="catalogo" className="section-padding scroll-mt-24">
+    <section id="catalogo" className="section-padding relative scroll-mt-24">
+      <span id="stock" className="absolute top-0 scroll-mt-24" aria-hidden="true" />
+      <span id="encargo" className="absolute top-0 scroll-mt-24" aria-hidden="true" />
       <div className="mx-auto max-w-7xl">
         <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           <div>
@@ -71,18 +83,24 @@ export function CatalogSection() {
         {/* Componente de Filtros de Catálogo */}
         <CatalogFilters
           selectedCategory={selectedCategory}
-          onSelectCategory={setSelectedCategory}
+          onSelectCategory={(category) => startTransition(() => setSelectedCategory(category))}
           selectedSize={selectedSize}
-          onSelectSize={setSelectedSize}
+          onSelectSize={(size) => startTransition(() => setSelectedSize(size))}
           selectedSort={selectedSort}
-          onSelectSort={setSelectedSort}
+          onSelectSort={(sort) => startTransition(() => setSelectedSort(sort))}
           totalProducts={filteredProducts.length}
           className="mb-10"
         />
 
+        <div role="status" aria-live="polite" className="mb-4 min-h-5 text-xs text-gold">
+          {isLoading || isPending ? (
+            <span className="flex items-center gap-2"><Loader2 aria-hidden="true" className="h-4 w-4 motion-safe:animate-spin" />{isLoading ? "Actualizando catálogo..." : "Aplicando filtros..."}</span>
+          ) : `${filteredProducts.length} modelos encontrados`}
+        </div>
+        <div aria-busy={isLoading || isPending} className={isPending ? "opacity-60" : undefined}>
         {/* Grilla de productos filtrados */}
         {filteredProducts.length === 0 ? (
-          <div className="rounded-md border border-white/10 bg-charcoal-50/50 p-16 text-center">
+          <div className="rounded-md border border-white/10 bg-charcoal-50/50 px-4 py-12 sm:p-16 text-center">
             <Trophy className="mx-auto h-12 w-12 text-gold/40 mb-3" />
             <h3 className="font-display text-xl font-medium text-ivory">
               No hay botines con esos filtros
@@ -98,6 +116,7 @@ export function CatalogSection() {
             ))}
           </div>
         )}
+        </div>
       </div>
     </section>
   );

@@ -1,7 +1,6 @@
 "use client";
 
-import React, { useEffect, useState, useTransition } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import React, { useEffect, useState } from "react";
 import {
   Flame,
   Plane,
@@ -12,7 +11,6 @@ import {
   CreditCard,
   RefreshCw,
   AlertCircle,
-  ExternalLink,
   Sparkles,
 } from "lucide-react";
 import { supabase, type OrderRow, type OrderStatus } from "@/lib/supabase";
@@ -98,12 +96,13 @@ export function OrderTracking({
   const [order, setOrder] = useState<OrderRow | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [isPending, startTransition] = useTransition();
+  const [isPending, setIsPending] = useState(false);
 
   // Función para obtener la orden desde Supabase
   const fetchOrder = React.useCallback(
     async (showLoading = true) => {
       if (showLoading) setIsLoading(true);
+      else setIsPending(true);
       setError(null);
 
       try {
@@ -126,6 +125,7 @@ export function OrderTracking({
         setError(err?.message || "Ocurrió un error al consultar el pedido.");
       } finally {
         if (showLoading) setIsLoading(false);
+        else setIsPending(false);
       }
     },
     [orderId]
@@ -270,8 +270,9 @@ export function OrderTracking({
           {/* Botón de actualizar rápido */}
           <button
             type="button"
-            onClick={() => startTransition(() => fetchOrder(false))}
+            onClick={() => fetchOrder(false)}
             disabled={isPending}
+            aria-busy={isPending}
             className="flex items-center gap-1.5 rounded-sm border border-white/10 bg-charcoal-50 px-3 py-1.5 text-xs text-ivory/70 transition-all hover:border-gold/40 hover:text-gold"
             title="Refrescar estado"
           >
